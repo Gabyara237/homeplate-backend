@@ -72,4 +72,23 @@ router.delete("/:recipeId",verifyToken, async (req,res) => {
     }
 });
 
+
+// Create comment
+router.post("/:recipeId/comments", verifyToken, async(req,res)=>{
+    try{
+        req.body.author= req.user._id;
+        const recipe = await Recipe.findById(req.params.recipeId);
+        recipe.comments.push(req.body);
+        await recipe.save();
+
+        const newComment = recipe.comments[recipe.comments.length -1]
+       newComment._doc.author = req.user;
+
+        res.status(201).json(newComment)
+    }catch (err){
+        res.status(500).send({err: err.message})
+    }
+})
+
+
 module.exports = router
