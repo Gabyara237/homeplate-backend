@@ -110,6 +110,7 @@ router.get("/:recipeId", verifyToken, async(req, res)=>{
     
 })
 
+// Add Like to specific recipe
 router.post("/:recipeId/likes", verifyToken, async(req,res)=>{
     try{
         const recipe = await Recipe.findById(req.params.recipeId)
@@ -128,6 +129,28 @@ router.post("/:recipeId/likes", verifyToken, async(req,res)=>{
             likesCount: recipe.likes.length,
             liked:true
         })
+    }catch(err){
+        res.status(500).send({err: err.message})
+    }
+})
+
+// Delete like to specific recipe
+router.delete("/:recipeId/likes", verifyToken, async(req,res)=>{
+    try{
+        const recipe = await Recipe.findById(req.params.recipeId)
+        const userId = req.user._id;
+        if(!recipe) return res.status(404).json({err: "Recipe not found"})
+        
+        recipe.likes =recipe.likes.filter((id)=> id.toString() !== userId.toString())
+
+        await recipe.save()
+        
+        res.status(200).json({
+            recipeId: recipe._id,
+            likesCount: recipe.likes.length,
+            liked: false
+        })
+
     }catch(err){
         res.status(500).send({err: err.message})
     }
