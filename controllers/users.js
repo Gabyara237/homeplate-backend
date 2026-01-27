@@ -21,7 +21,7 @@ const getFollowingList = async (userId) =>{
   return following
 }
 
-const getFollowerList = async(userId) =>{
+const getFollowersList = async(userId) =>{
   const filter = {following: userId}
   const populateField = "follower"
 
@@ -93,12 +93,22 @@ router.get('/me/following', verifyToken,async(req,res)=>{
 router.get('/me/followers', verifyToken, async(req,res)=>{
   try{
     const userId= req.user._id;
-    const followers = await getFollowerList(userId)
+    const followers = await getFollowersList(userId)
 
     return res.status(200).json({followers})
 
   }catch(err){
     return res.status(500).json({err: err.message})
+  }
+})
+
+router.get('/:userId/followers',verifyToken,async(req,res) =>{
+  try{
+    const userId = req.params.userId;
+    const followers = await getFollowersList(userId)
+    return res.status(200).json({followers})
+  }catch(err){
+    return res.status(500).json({err:err.message})
   }
 })
 
