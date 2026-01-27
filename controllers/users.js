@@ -5,6 +5,7 @@ const User = require('../models/user');
 const Follow = require('../models/follow')
 
 const verifyToken = require('../middleware/verify-token');
+const { validate } = require('../models/recipe');
 
 
 const getFollowList = async ({filter, populateField}) =>{
@@ -120,6 +121,23 @@ router.get('/:userId/following', verifyToken, async(req,res)=>{
 
   }catch(err){
     return res.status(500).json({err:err.message})
+  }
+})
+
+router.delete('/:userId/follow', verifyToken,async(req,res)=>{
+  try{
+    const followingId = req.params.userId;
+    const followerId = req.user._id
+
+    const deletedFollow = await Follow.findOneAndDelete({following: followingId , follower:followerId})
+    
+    if (!deletedFollow){
+      return res.status(404).json({err: "Follow relationship not found"})
+    }
+    
+    return res.status(200).json({ message: 'Successfully unfollowed user' })
+  }catch(err){
+    return res.status(500).json({err: err.message})
   }
 })
 
