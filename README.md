@@ -131,7 +131,7 @@ This project was collaboratively developed by:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/homeplate-backend.git
+git clone https://github.com/Gabyara237/homeplate-frontend.git
 cd homeplate-backend
 ```
 
